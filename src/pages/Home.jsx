@@ -13,37 +13,41 @@ import { Container } from "@mui/material";
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { useSearchParams } from "react-router-dom";
+import { addToCart } from "../feature/cart-slice";
+import { fetchAllProducts } from "../feature/products-slice";
 
 export default function Home() {
+  const [searchParams] = useSearchParams();
+  const category = searchParams.get("category");
+  const searchTerm = searchParams.get("searchterm");
   const theme = useTheme();
-  const [products, setProducts] = useState([]);
+  const state = useSelector((state) => state.products);
+  const { value: products, loading } = state ?? {};
+  const dispatch = useDispatch();
 
-  async function fetchAllProducts() {
-    const response = await fetch("https://fakestoreapi.com/products");
-    const result = await response.json();
-    setProducts(result);
+  if (!products?.length) {
+    dispatch(fetchAllProducts());
   }
-  useEffect(() => {
-    fetchAllProducts();
-  }, []);
 
-  // {
-  //   "id": 1,
-  //   "title": "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
-  //   "price": 109.95,
-  //   "description": "Your perfect pack for everyday use and walks in the forest. Stash your laptop (up to 15 inches) in the padded sleeve, your everyday",
-  //   "category": "men's clothing",
-  //   "image": "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
-  //   "rating": {
-  //     "rate": 3.9,
-  //     "count": 120
-  //   }
-  // }
+  function addProductToCart(product) {
+    //dispatch an action
+    dispatch(addToCart({ product, quantity: 1 }));
+  }
+
+  let filteredProducts =
+    category && category !== "all" ? products.filter((prod) => prod.category === category) : products;
+
+  filteredProducts = searchTerm
+    ? filteredProducts.filter((prod) => prod.title.toLowerCase().includes(searchTerm.toLowerCase()))
+    : filteredProducts;
 
   return (
     <Container sx={{ py: 8 }} maxWidth="lg">
       <Grid container spacing={4}>
-        {products.map(({ title, id, price, description, rating, image }) => (
+        {filteredProducts?.map(({ title, id, price, description, rating, image }) => (
           <Grid item key={id} xs={12} sm={6} md={3}>
             <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
               <CardMedia
@@ -67,8 +71,8 @@ export default function Home() {
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     display: "-webkit-box",
-                    "-webkit-line-clamp": "1",
-                    "-webkit-box-orient": "vertical",
+                    WebkitLineClamp: "1",
+                    WebkitBoxOrient: "vertical",
                   }}
                 >
                   {title}
@@ -80,8 +84,8 @@ export default function Home() {
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     display: "-webkit-box",
-                    "-webkit-line-clamp": "2",
-                    "-webkit-box-orient": "vertical",
+                    WebkitLineClamp: "2",
+                    WebkitBoxOrient: "vertical",
                   }}
                 >
                   {description}
@@ -96,7 +100,10 @@ export default function Home() {
                   alignSelf: "center",
                 }}
               >
-                <Button variant="contained">
+                <Button
+                  variant="contained"
+                  onClick={() => addProductToCart({ title, id, price, description, rating, image })}
+                >
                   <ShoppingCartSharp />
                   Add to cart
                 </Button>
