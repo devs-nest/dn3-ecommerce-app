@@ -49,7 +49,7 @@ export default function Home() {
       <Grid container spacing={4}>
         {filteredProducts?.map(({ title, id, price, description, rating, image }) => (
           <Grid item key={id} xs={12} sm={6} md={3}>
-            <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+            <Card sx={{ height: "100%", display: "flex", flexDirection: "column", padding: theme.spacing(2, 0) }}>
               <CardMedia
                 component="img"
                 sx={{
