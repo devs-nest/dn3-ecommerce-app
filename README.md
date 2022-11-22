@@ -7,4 +7,4 @@ Feauture wise branches have been created. They are in covering the topics taught
 
 # Youtube Session
 
-[E-Commerce App](https://www.youtube.com/watch?v=qlo-kF16bHc&t=241s)
+[E-Commerce App](https://www.youtube.com/watch?v=qlo-kF16bHc)
