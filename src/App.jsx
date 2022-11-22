@@ -12,13 +12,14 @@ import { store } from "./store";
 import Checkout from "./pages/Checkout";
 import AuthProvider, { useAuth } from "./firebase/Auth";
 import { Navigate } from "react-router-dom";
+import Register from "./pages/Register";
 
-function ProtectedRoute({ chidlren }) {
+function ProtectedRoute({ children }) {
   const { user } = useAuth();
   if (!user) {
     return <Navigate to={"/login"} />;
   }
-  return chidlren;
+  return children;
 }
 
 const router = createBrowserRouter(
@@ -38,6 +39,7 @@ const router = createBrowserRouter(
         />
       </Route>
       <Route path="/login" index element={<Login />} />
+      <Route path="/register" index element={<Register />} />
     </>
   )
 );
